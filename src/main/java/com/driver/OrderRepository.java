@@ -23,7 +23,7 @@ public class OrderRepository {
         deliveryPartnerMap.put(partnerId,partner);
     }
 
-    public void addOrderPartnerPair(String orderId, String partnerId) {
+    public void createOrderPartnerPair(String orderId, String partnerId) {
         if(orderMap.containsKey(orderId) && deliveryPartnerMap.containsKey(partnerId)){
             DeliveryPartner partner=deliveryPartnerMap.get(partnerId);
             partner.setNumberOfOrders(deliveryPartnerMap.get(partnerId).getNumberOfOrders()+1);
@@ -69,5 +69,38 @@ public class OrderRepository {
             if(!orderPartnerMap.containsKey(OrderID)) count++;
         }
         return count;
+    }
+
+    public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId) {
+        Integer count=0;
+        int userTime=Integer.parseInt(time.substring(0,2))*60+Integer.parseInt(time.substring(3));
+        for(String orderId:partnerOrdersMap.get(partnerId)){
+            if(orderMap.get(orderId).getDeliveryTime()>userTime) count++;
+        }
+        return count;
+    }
+
+    public String getLastDeliveryTimeByPartnerId(String partnerId) {
+        int time=0;
+        for(String orderId:partnerOrdersMap.get(partnerId)){
+            int deliveryTime=orderMap.get(orderId).getDeliveryTime();
+            time=Math.max(time,deliveryTime);
+        }
+        return String.valueOf(time/60)+":"+String.valueOf(time%60);
+    }
+
+    public void deletePartnerById(String partnerId) {
+
+        for(String orderID:partnerOrdersMap.get(partnerId)){
+            orderPartnerMap.remove(orderID);
+        }
+        partnerOrdersMap.remove(partnerId);
+        deliveryPartnerMap.remove(partnerId);
+    }
+
+    public void deleteOrderById(String orderId) {
+        deliveryPartnerMap.remove(orderPartnerMap.get(orderId));
+        orderPartnerMap.remove(orderId);
+        orderMap.remove(orderId);
     }
 }
