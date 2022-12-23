@@ -2,17 +2,14 @@ package com.driver;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class OrderRepository {
 
     Map<String,Order> orderMap=new HashMap<>();
     Map<String,DeliveryPartner> deliveryPartnerMap=new HashMap<>();
-    Map<String, List<String>> partnerOrdersMap=new HashMap<>();
+    Map<String, HashSet<String>> partnerOrdersMap=new HashMap<>();
     Map<String,String> orderPartnerMap=new HashMap<>();
     public void addOrder(Order order) {
         orderMap.put(order.getId(),order);
@@ -29,11 +26,11 @@ public class OrderRepository {
             partner.setNumberOfOrders(deliveryPartnerMap.get(partnerId).getNumberOfOrders()+1);
             deliveryPartnerMap.put(partnerId,partner);
 
-            List<String> orderIDList;
-            if(partnerOrdersMap.containsKey(partnerId)) orderIDList=partnerOrdersMap.get(partnerId);
-            else orderIDList=new ArrayList<>();
-            orderIDList.add(orderId);
-            partnerOrdersMap.put(partnerId,orderIDList);
+            HashSet<String> orderIDSet;
+            if(partnerOrdersMap.containsKey(partnerId)) orderIDSet=partnerOrdersMap.get(partnerId);
+            else orderIDSet=new HashSet<>();
+            orderIDSet.add(orderId);
+            partnerOrdersMap.put(partnerId,orderIDSet);
 
             orderPartnerMap.put(orderId,partnerId);
         }
@@ -52,7 +49,7 @@ public class OrderRepository {
     }
 
     public List<String> getOrdersByPartnerId(String partnerId) {
-        return partnerOrdersMap.get(partnerId);
+        return new ArrayList<>(partnerOrdersMap.get(partnerId));
     }
 
     public List<String> getAllOrders() {
