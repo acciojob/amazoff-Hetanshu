@@ -22,15 +22,16 @@ public class OrderRepository {
 
     public void createOrderPartnerPair(String orderId, String partnerId) {
         if(orderMap.containsKey(orderId) && deliveryPartnerMap.containsKey(partnerId)){
-            DeliveryPartner partner=deliveryPartnerMap.get(partnerId);
-            partner.setNumberOfOrders(deliveryPartnerMap.get(partnerId).getNumberOfOrders()+1);
-            deliveryPartnerMap.put(partnerId,partner);
 
             HashSet<String> orderIDSet;
             if(partnerOrdersMap.containsKey(partnerId)) orderIDSet=partnerOrdersMap.get(partnerId);
             else orderIDSet=new HashSet<>();
             orderIDSet.add(orderId);
             partnerOrdersMap.put(partnerId,orderIDSet);
+
+            DeliveryPartner partner=deliveryPartnerMap.get(partnerId);
+            partner.setNumberOfOrders(partnerOrdersMap.get(partnerId).size());
+            deliveryPartnerMap.put(partnerId,partner);
 
             orderPartnerMap.put(orderId,partnerId);
         }
@@ -45,18 +46,19 @@ public class OrderRepository {
     }
 
     public Integer getOrderCountByPartnerId(String partnerId) {
-        return deliveryPartnerMap.get(partnerId).getNumberOfOrders();
+        Integer count=0;
+        if(deliveryPartnerMap.containsKey(partnerId)) count=deliveryPartnerMap.get(partnerId).getNumberOfOrders();
+        return count;
     }
 
     public List<String> getOrdersByPartnerId(String partnerId) {
-        return new ArrayList<>(partnerOrdersMap.get(partnerId));
+        HashSet<String> orderList=new HashSet<>();
+        if(partnerOrdersMap.containsKey(partnerId)) orderList=partnerOrdersMap.get(partnerId);
+        return new ArrayList<>(orderList);
     }
 
     public List<String> getAllOrders() {
-        List<String> allOrdersList=new ArrayList<>();
-
-        for(String orderID:orderMap.keySet()) allOrdersList.add(orderID);
-        return allOrdersList;
+        return new ArrayList<>(orderMap.keySet());
     }
 
     public Integer getCountOfUnassignedOrders() {
