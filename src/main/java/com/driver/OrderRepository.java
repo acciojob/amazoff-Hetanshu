@@ -63,7 +63,6 @@ public class OrderRepository {
 
     public Integer getCountOfUnassignedOrders() {
         Integer count=0;
-
         for(String OrderID:orderMap.keySet()){
             if(!orderPartnerMap.containsKey(OrderID)) count++;
         }
@@ -72,9 +71,13 @@ public class OrderRepository {
 
     public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId) {
         Integer count=0;
-        int userTime=Integer.parseInt(time.substring(0,2))*60+Integer.parseInt(time.substring(3));
-        for(String orderId:partnerOrdersMap.get(partnerId)){
-            if(orderMap.get(orderId).getDeliveryTime()>userTime) count++;
+        Integer userTime=Integer.parseInt(time.substring(0,2))*60+Integer.parseInt(time.substring(3));
+        if(partnerOrdersMap.containsKey(partnerId)) {
+            for (String orderId : partnerOrdersMap.get(partnerId)) {
+                if(orderMap.containsKey(orderId)) {
+                    if (orderMap.get(orderId).getDeliveryTime() > userTime) count++;
+                }
+            }
         }
         return count;
     }
