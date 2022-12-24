@@ -71,7 +71,7 @@ public class OrderRepository {
 
     public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId) {
         Integer count=0;
-        Integer userTime=Integer.parseInt(time.substring(0,2))*60+Integer.parseInt(time.substring(3));
+        Integer userTime=Integer.valueOf(time.substring(0,2))*60+Integer.valueOf(time.substring(3));
         if(partnerOrdersMap.containsKey(partnerId)) {
             for (String orderId : partnerOrdersMap.get(partnerId)) {
                 if(orderMap.containsKey(orderId)) {
