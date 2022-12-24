@@ -17,7 +17,7 @@ public class OrderRepository {
 
     public void addPartner(String partnerId) {
         DeliveryPartner partner=new DeliveryPartner(partnerId);
-        deliveryPartnerMap.put(partnerId,partner);
+        deliveryPartnerMap.put(partner.getId(),partner);
     }
 
     public void createOrderPartnerPair(String orderId, String partnerId) {
@@ -30,8 +30,8 @@ public class OrderRepository {
             partnerOrdersMap.put(partnerId,orderIDSet);
 
             DeliveryPartner partner=deliveryPartnerMap.get(partnerId);
-            partner.setNumberOfOrders(partnerOrdersMap.get(partnerId).size());
-            deliveryPartnerMap.put(partnerId,partner);
+            partner.setNumberOfOrders(orderIDSet.size());
+//            deliveryPartnerMap.put(partnerId,partner);
 
             orderPartnerMap.put(orderId,partnerId);
         }
@@ -63,8 +63,9 @@ public class OrderRepository {
 
     public Integer getCountOfUnassignedOrders() {
         Integer count=0;
-        for(String OrderID:orderMap.keySet()){
-            if(!orderPartnerMap.containsKey(OrderID)) count++;
+        List<String> orders=new ArrayList<>(orderMap.keySet());
+        for(String OrderID:orders){
+            if(!orderPartnerMap.containsKey(OrderID)) count +=1;
         }
         return count;
     }
@@ -75,7 +76,7 @@ public class OrderRepository {
         if(partnerOrdersMap.containsKey(partnerId)) {
             for (String orderId : partnerOrdersMap.get(partnerId)) {
                 if(orderMap.containsKey(orderId)) {
-                    if (orderMap.get(orderId).getDeliveryTime() > userTime) count++;
+                    if (orderMap.get(orderId).getDeliveryTime() > userTime) count +=1;
                 }
             }
         }
